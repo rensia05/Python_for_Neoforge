@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import base64
 from contextlib import contextmanager
 from importlib import resources
 import os
@@ -15,6 +16,10 @@ from .registry import build, clear
 DEFAULT_MOD_ID = "python_for_neoforge"
 DEFAULT_NEO_VERSION = "21.1.200"
 DEFAULT_JAVA_HOME = "C:/Program Files/Java/jdk-21"
+PLACEHOLDER_PNG = (
+    "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAKUlEQVR4nGNkYGD4z0ABYBw1gGE0"
+    "DBqGgYGBgYGBgYGBgQEAOwsCH2f3uAkAAAAASUVORK5CYII="
+)
 
 
 def main() -> None:
@@ -56,7 +61,10 @@ def main() -> None:
 def init_project(args: argparse.Namespace) -> None:
     project_dir = Path(args.path)
     project_dir.mkdir(parents=True, exist_ok=False)
-    (project_dir / "textures").mkdir()
+    textures_dir = project_dir / "textures"
+    textures_dir.mkdir()
+    _write_placeholder_png(textures_dir / "example_item.png")
+    _write_placeholder_png(textures_dir / "example_block.png")
     (project_dir / "mod.py").write_text(
         _example_mod_py(mod_id=args.mod_id, mod_name=args.mod_name),
         encoding="utf-8",
@@ -210,6 +218,10 @@ def _read_project_config(path: Path) -> dict[str, str]:
     return values
 
 
+def _write_placeholder_png(path: Path) -> None:
+    path.write_bytes(base64.b64decode(PLACEHOLDER_PNG))
+
+
 @contextmanager
 def _pushd(path: Path):
     previous = Path.cwd()
@@ -225,15 +237,19 @@ def _example_mod_py(*, mod_id: str, mod_name: str) -> str:
 
 config(mod_version=1211)
 
-item("ruby", display_name="Ruby", texture_file="textures/ruby.png")
-block("ruby_block", display_name="Ruby Block", hardness=5.0, texture_file="textures/ruby_block.png")
+item("example_item", display_name="Example Item", texture_file="textures/example_item.png")
+block("example_block", display_name="Example Block", hardness=5.0, texture_file="textures/example_block.png")
 
-creative_tab("main", display_name="{mod_name}", icon="ruby", entries=["ruby", "ruby_block"])
+creative_tab("main", display_name="{mod_name}", icon="example_item", entries=["example_item", "example_block"])
 
 shaped_recipe(
-    "ruby_block",
-    result="ruby_block",
+    "example_block",
+    result="example_block",
     pattern=["RRR", "RRR", "RRR"],
-    key={{"R": "ruby"}},
+    key={{"R": "example_item"}},
 )
 '''
+
+
+if __name__ == "__main__":
+    main()

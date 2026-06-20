@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyneoforge"
-version = "0.1.0"
+version = "0.1.1"
 description = "Python DSL that emits generated content for a NeoForge mod."
 requires-python = ">=3.10"
 

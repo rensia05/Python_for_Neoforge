@@ -24,16 +24,16 @@ from pyneoforge import block, config, creative_tab, item, shaped_recipe
 
 config(mod_version=1211)
 
-item("ruby", display_name="Ruby", texture_file="textures/ruby.png")
-block("ruby_block", display_name="Ruby Block", hardness=5.0, max_stack_size=64, texture_file="textures/ruby_block.png")
+item("example_item", display_name="Example Item", texture_file="textures/example_item.png")
+block("example_block", display_name="Example Block", hardness=5.0, max_stack_size=64, texture_file="textures/example_block.png")
 
-creative_tab("main", display_name="Ruby Mod", icon="ruby", entries=["ruby", "ruby_block"])
+creative_tab("main", display_name="Ruby Mod", icon="example_item", entries=["example_item", "example_block"])
 
 shaped_recipe(
-    "ruby_block",
-    result="ruby_block",
+    "example_block",
+    result="example_block",
     pattern=["RRR", "RRR", "RRR"],
-    key={"R": "ruby"},
+    key={"R": "example_item"},
 )
 ```
 
@@ -43,14 +43,20 @@ Put PNG textures beside the script:
 ruby_mod/
   mod.py
   textures/
-    ruby.png
-    ruby_block.png
+    example_item.png
+    example_block.png
 ```
 
 Build a NeoForge jar:
 
 ```powershell
 pyneoforge package
+```
+
+If Windows cannot find the `pyneoforge` command, use the module form:
+
+```powershell
+python -m pyneoforge package
 ```
 
 The finished jar is written to:
