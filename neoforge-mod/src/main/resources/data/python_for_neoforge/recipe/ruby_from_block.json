@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "python_for_neoforge:ruby_block"
+    }
+  ],
+  "result": {
+    "id": "python_for_neoforge:ruby",
+    "count": 9
+  }
+}

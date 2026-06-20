@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyneoforge"
+version = "0.1.0"
+description = "Python DSL that emits generated content for a NeoForge mod."
+requires-python = ">=3.10"
+
+[project.scripts]
+pyneoforge = "pyneoforge.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "python"}
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["python"]
+
+[tool.setuptools.package-data]
+pyneoforge = ["templates/**/*"]

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "python_for_neoforge:block/ruby_block"
+  }
+}

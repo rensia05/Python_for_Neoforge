@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "RRR",
+    "RRR",
+    "RRR"
+  ],
+  "key": {
+    "R": {
+      "item": "python_for_neoforge:ruby"
+    }
+  },
+  "result": {
+    "id": "python_for_neoforge:ruby_block"
+  }
+}

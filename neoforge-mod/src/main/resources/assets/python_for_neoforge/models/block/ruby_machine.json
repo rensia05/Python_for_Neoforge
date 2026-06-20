@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "north": "python_for_neoforge:block/ruby_machine/front",
+    "south": "python_for_neoforge:block/ruby_machine/side",
+    "east": "python_for_neoforge:block/ruby_machine/side",
+    "west": "python_for_neoforge:block/ruby_machine/side",
+    "up": "python_for_neoforge:block/ruby_machine/top",
+    "down": "python_for_neoforge:block/ruby_machine/bottom"
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "minecraft_version": "1.21.1",
+  "items": [
+    {
+      "id": "ruby",
+      "display_name": "Ruby",
+      "max_stack_size": 64,
+      "texture": "python_for_neoforge:item/ruby",
+      "texture_file": null
+    }
+  ],
+  "blocks": [
+    {
+      "id": "ruby_block",
+      "display_name": "Ruby Block",
+      "hardness": 5.0,
+      "resistance": 6.0,
+      "needs_block_item": true,
+      "max_stack_size": 64,
+      "texture": "python_for_neoforge:block/ruby_block",
+      "texture_file": null,
+      "textures": null,
+      "texture_files": null
+    },
+    {
+      "id": "ruby_machine",
+      "display_name": "Ruby Machine",
+      "hardness": 4.0,
+      "resistance": 6.0,
+      "needs_block_item": true,
+      "max_stack_size": 64,
+      "texture": null,
+      "texture_file": null,
+      "textures": {
+        "north": "python_for_neoforge:block/ruby_machine/front",
+        "south": "python_for_neoforge:block/ruby_machine/side",
+        "east": "python_for_neoforge:block/ruby_machine/side",
+        "west": "python_for_neoforge:block/ruby_machine/side",
+        "up": "python_for_neoforge:block/ruby_machine/top",
+        "down": "python_for_neoforge:block/ruby_machine/bottom"
+      },
+      "texture_files": null
+    }
+  ],
+  "creative_tabs": [
+    {
+      "id": "main",
+      "display_name": "Python for NeoForge",
+      "icon": "ruby",
+      "entries": [
+        "ruby",
+        "ruby_block",
+        "ruby_machine"
+      ]
+    }
+  ]
+}

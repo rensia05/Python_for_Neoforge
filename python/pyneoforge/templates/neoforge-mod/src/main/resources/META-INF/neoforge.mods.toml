@@ -1,0 +1,9 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+license = "GPL-3.0-only"
+
+[[mods]]
+modId = "__MOD_ID__"
+version = "__MOD_VERSION__"
+displayName = "__MOD_NAME__"
+description = "Generated from Python with pyneoforge."
