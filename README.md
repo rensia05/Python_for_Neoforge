@@ -1,5 +1,7 @@
 # Python_for_Neoforge
 
+Fully Workable and Compatiable with 1.21.1 NeoForge Version!
+
 Write basic NeoForge mods in Python, then package them into a normal `.jar` mod.
 
 ## User Workflow
