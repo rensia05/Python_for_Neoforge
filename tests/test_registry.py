@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from pyneoforge import block, build, clear, config, creative_tab, item, shaped_recipe, shapeless_recipe
+from pyneoforge import block, build, clear, config, creative_tab, food, item, pickaxe, shaped_recipe, shapeless_recipe, sword
 from pyneoforge.registry import normalize_minecraft_version
 
 
@@ -16,6 +16,9 @@ def test_build_writes_generated_resources(tmp_path: Path) -> None:
     clear()
     config(mod_version=1211)
     item("ruby", display_name="Ruby")
+    food("ruby_apple", display_name="Ruby Apple", nutrition=6, saturation=0.8)
+    sword("ruby_sword", display_name="Ruby Sword", tier="diamond", attack_damage=4.0, attack_speed=-2.4)
+    pickaxe("ruby_pickaxe", display_name="Ruby Pickaxe", tier="diamond")
     block("ruby_block", display_name="Ruby Block", max_stack_size=16)
     block(
         "ruby_machine",
@@ -38,6 +41,10 @@ def test_build_writes_generated_resources(tmp_path: Path) -> None:
     generated_path = tmp_path / "assets/python_for_neoforge/pyneoforge/generated.json"
     assert generated_path.exists()
     generated = json.loads(generated_path.read_text(encoding="utf-8"))
+    assert generated["items"][1]["kind"] == "food"
+    assert generated["items"][1]["food"]["nutrition"] == 6
+    assert generated["items"][2]["kind"] == "sword"
+    assert generated["items"][2]["tier"] == "diamond"
     assert generated["blocks"][0]["max_stack_size"] == 16
     assert (tmp_path / "assets/python_for_neoforge/lang/en_us.json").exists()
     assert (tmp_path / "assets/python_for_neoforge/models/item/ruby.json").exists()

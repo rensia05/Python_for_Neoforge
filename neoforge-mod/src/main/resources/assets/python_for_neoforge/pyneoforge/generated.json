@@ -7,7 +7,53 @@
       "display_name": "Ruby",
       "max_stack_size": 64,
       "texture": "python_for_neoforge:item/ruby",
-      "texture_file": null
+      "texture_file": null,
+      "kind": "item",
+      "food": null,
+      "tier": null,
+      "attack_damage": null,
+      "attack_speed": null
+    },
+    {
+      "id": "ruby_apple",
+      "display_name": "Ruby Apple",
+      "max_stack_size": 64,
+      "texture": "python_for_neoforge:item/ruby_apple",
+      "texture_file": null,
+      "kind": "food",
+      "food": {
+        "nutrition": 6,
+        "saturation": 0.8,
+        "always_edible": false,
+        "fast": false
+      },
+      "tier": null,
+      "attack_damage": null,
+      "attack_speed": null
+    },
+    {
+      "id": "ruby_sword",
+      "display_name": "Ruby Sword",
+      "max_stack_size": 1,
+      "texture": "python_for_neoforge:item/ruby_sword",
+      "texture_file": null,
+      "kind": "sword",
+      "food": null,
+      "tier": "diamond",
+      "attack_damage": 4.0,
+      "attack_speed": -2.4
+    },
+    {
+      "id": "ruby_pickaxe",
+      "display_name": "Ruby Pickaxe",
+      "max_stack_size": 1,
+      "texture": "python_for_neoforge:item/ruby_pickaxe",
+      "texture_file": null,
+      "kind": "pickaxe",
+      "food": null,
+      "tier": "diamond",
+      "attack_damage": 1.0,
+      "attack_speed": -2.8
     }
   ],
   "blocks": [
@@ -50,6 +96,9 @@
       "icon": "ruby",
       "entries": [
         "ruby",
+        "ruby_apple",
+        "ruby_sword",
+        "ruby_pickaxe",
         "ruby_block",
         "ruby_machine"
       ]

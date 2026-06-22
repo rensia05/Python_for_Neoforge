@@ -1,7 +1,10 @@
-from pyneoforge import block, config, creative_tab, item, shaped_recipe, shapeless_recipe
+from pyneoforge import block, config, creative_tab, food, item, pickaxe, shaped_recipe, shapeless_recipe, sword
 
 config(mod_version=1211)
 item("ruby", display_name="Ruby", texture="python_for_neoforge:item/ruby")
+food("ruby_apple", display_name="Ruby Apple", nutrition=6, saturation=0.8, texture="python_for_neoforge:item/ruby_apple")
+sword("ruby_sword", display_name="Ruby Sword", tier="diamond", attack_damage=4.0, attack_speed=-2.4, texture="python_for_neoforge:item/ruby_sword")
+pickaxe("ruby_pickaxe", display_name="Ruby Pickaxe", tier="diamond", attack_damage=1.0, attack_speed=-2.8, texture="python_for_neoforge:item/ruby_pickaxe")
 block(
     "ruby_block",
     display_name="Ruby Block",
@@ -29,7 +32,7 @@ creative_tab(
     "main",
     display_name="Python for NeoForge",
     icon="ruby",
-    entries=["ruby", "ruby_block", "ruby_machine"],
+    entries=["ruby", "ruby_apple", "ruby_sword", "ruby_pickaxe", "ruby_block", "ruby_machine"],
 )
 
 shaped_recipe(

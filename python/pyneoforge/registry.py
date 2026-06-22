@@ -8,12 +8,25 @@ from typing import Any
 
 
 @dataclass(frozen=True)
+class FoodDef:
+    nutrition: int
+    saturation: float
+    always_edible: bool = False
+    fast: bool = False
+
+
+@dataclass(frozen=True)
 class ItemDef:
     id: str
     display_name: str | None = None
     max_stack_size: int = 64
     texture: str | None = None
     texture_file: str | None = None
+    kind: str = "item"
+    food: FoodDef | None = None
+    tier: str | None = None
+    attack_damage: float | None = None
+    attack_speed: float | None = None
 
 
 @dataclass(frozen=True)
@@ -98,6 +111,166 @@ def item(
     texture: str | None = None,
     texture_file: str | Path | None = None,
 ) -> ItemDef:
+    return _register_item(
+        id=id,
+        display_name=display_name,
+        max_stack_size=max_stack_size,
+        texture=texture,
+        texture_file=str(texture_file) if texture_file is not None else None,
+    )
+
+
+def food(
+    id: str,
+    *,
+    display_name: str | None = None,
+    nutrition: int,
+    saturation: float,
+    always_edible: bool = False,
+    fast: bool = False,
+    max_stack_size: int = 64,
+    texture: str | None = None,
+    texture_file: str | Path | None = None,
+) -> ItemDef:
+    if nutrition < 0:
+        raise ValueError("nutrition must be 0 or greater")
+    if saturation < 0:
+        raise ValueError("saturation must be 0 or greater")
+
+    return _register_item(
+        id=id,
+        display_name=display_name,
+        max_stack_size=max_stack_size,
+        texture=texture,
+        texture_file=str(texture_file) if texture_file is not None else None,
+        kind="food",
+        food=FoodDef(nutrition=nutrition, saturation=saturation, always_edible=always_edible, fast=fast),
+    )
+
+
+def sword(
+    id: str,
+    *,
+    display_name: str | None = None,
+    tier: str = "iron",
+    attack_damage: float = 3.0,
+    attack_speed: float = -2.4,
+    texture: str | None = None,
+    texture_file: str | Path | None = None,
+) -> ItemDef:
+    return _tool_item(
+        id,
+        kind="sword",
+        display_name=display_name,
+        tier=tier,
+        attack_damage=attack_damage,
+        attack_speed=attack_speed,
+        texture=texture,
+        texture_file=texture_file,
+    )
+
+
+def pickaxe(
+    id: str,
+    *,
+    display_name: str | None = None,
+    tier: str = "iron",
+    attack_damage: float = 1.0,
+    attack_speed: float = -2.8,
+    texture: str | None = None,
+    texture_file: str | Path | None = None,
+) -> ItemDef:
+    return _tool_item(
+        id,
+        kind="pickaxe",
+        display_name=display_name,
+        tier=tier,
+        attack_damage=attack_damage,
+        attack_speed=attack_speed,
+        texture=texture,
+        texture_file=texture_file,
+    )
+
+
+def axe(
+    id: str,
+    *,
+    display_name: str | None = None,
+    tier: str = "iron",
+    attack_damage: float = 6.0,
+    attack_speed: float = -3.1,
+    texture: str | None = None,
+    texture_file: str | Path | None = None,
+) -> ItemDef:
+    return _tool_item(
+        id,
+        kind="axe",
+        display_name=display_name,
+        tier=tier,
+        attack_damage=attack_damage,
+        attack_speed=attack_speed,
+        texture=texture,
+        texture_file=texture_file,
+    )
+
+
+def shovel(
+    id: str,
+    *,
+    display_name: str | None = None,
+    tier: str = "iron",
+    attack_damage: float = 1.5,
+    attack_speed: float = -3.0,
+    texture: str | None = None,
+    texture_file: str | Path | None = None,
+) -> ItemDef:
+    return _tool_item(
+        id,
+        kind="shovel",
+        display_name=display_name,
+        tier=tier,
+        attack_damage=attack_damage,
+        attack_speed=attack_speed,
+        texture=texture,
+        texture_file=texture_file,
+    )
+
+
+def hoe(
+    id: str,
+    *,
+    display_name: str | None = None,
+    tier: str = "iron",
+    attack_damage: float = -2.0,
+    attack_speed: float = -1.0,
+    texture: str | None = None,
+    texture_file: str | Path | None = None,
+) -> ItemDef:
+    return _tool_item(
+        id,
+        kind="hoe",
+        display_name=display_name,
+        tier=tier,
+        attack_damage=attack_damage,
+        attack_speed=attack_speed,
+        texture=texture,
+        texture_file=texture_file,
+    )
+
+
+def _register_item(
+    *,
+    id: str,
+    display_name: str | None = None,
+    max_stack_size: int = 64,
+    texture: str | None = None,
+    texture_file: str | None = None,
+    kind: str = "item",
+    food: FoodDef | None = None,
+    tier: str | None = None,
+    attack_damage: float | None = None,
+    attack_speed: float | None = None,
+) -> ItemDef:
     _validate_id(id)
     _ensure_can_register_item(id)
     _ensure_one_texture_source(texture=texture, texture_file=texture_file)
@@ -108,10 +281,40 @@ def item(
         display_name=display_name,
         max_stack_size=max_stack_size,
         texture=texture,
-        texture_file=str(texture_file) if texture_file is not None else None,
+        texture_file=texture_file,
+        kind=kind,
+        food=food,
+        tier=tier,
+        attack_damage=attack_damage,
+        attack_speed=attack_speed,
     )
     _items.append(definition)
     return definition
+
+
+def _tool_item(
+    id: str,
+    *,
+    kind: str,
+    display_name: str | None,
+    tier: str,
+    attack_damage: float,
+    attack_speed: float,
+    texture: str | None,
+    texture_file: str | Path | None,
+) -> ItemDef:
+    normalized_tier = _normalize_tier(tier)
+    return _register_item(
+        id=id,
+        display_name=display_name,
+        max_stack_size=1,
+        texture=texture,
+        texture_file=str(texture_file) if texture_file is not None else None,
+        kind=kind,
+        tier=normalized_tier,
+        attack_damage=attack_damage,
+        attack_speed=attack_speed,
+    )
 
 
 def block(
@@ -524,6 +727,19 @@ def _validate_count(count: int) -> None:
 def _validate_stack_size(max_stack_size: int) -> None:
     if max_stack_size < 1 or max_stack_size > 99:
         raise ValueError("max_stack_size must be between 1 and 99")
+
+
+def _normalize_tier(tier: str) -> str:
+    normalized = tier.strip().lower()
+    aliases = {
+        "wooden": "wood",
+        "golden": "gold",
+    }
+    normalized = aliases.get(normalized, normalized)
+    allowed = {"wood", "stone", "iron", "diamond", "gold", "netherite"}
+    if normalized not in allowed:
+        raise ValueError(f"tier must be one of {', '.join(sorted(allowed))}: {tier!r}")
+    return normalized
 
 
 def _validate_pattern(pattern: list[str], key: dict[str, str]) -> None:

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "python_for_neoforge:item/ruby_sword"
+  }
+}

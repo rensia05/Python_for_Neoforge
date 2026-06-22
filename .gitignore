@@ -8,3 +8,4 @@ neoforge-mod/build/
 neoforge-mod/run/
 .pyneoforge/
 dist/
+examples/neoforge-mod/

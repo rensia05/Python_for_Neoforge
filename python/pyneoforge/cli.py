@@ -28,6 +28,7 @@ def main() -> None:
 
     init_parser = subparsers.add_parser("init", help="Create a new Python NeoForge mod project.")
     init_parser.add_argument("path", help="Directory to create")
+    init_parser.add_argument("--from", dest="from_script", help="Use an existing Python mod script as mod.py")
     init_parser.add_argument("--mod-id", default="my_python_mod")
     init_parser.add_argument("--mod-name", default="My Python Mod")
 
@@ -62,13 +63,22 @@ def init_project(args: argparse.Namespace) -> None:
     project_dir = Path(args.path)
     project_dir.mkdir(parents=True, exist_ok=False)
     textures_dir = project_dir / "textures"
-    textures_dir.mkdir()
-    _write_placeholder_png(textures_dir / "example_item.png")
-    _write_placeholder_png(textures_dir / "example_block.png")
-    (project_dir / "mod.py").write_text(
-        _example_mod_py(mod_id=args.mod_id, mod_name=args.mod_name),
-        encoding="utf-8",
-    )
+    source_script = Path(args.from_script).resolve() if args.from_script else None
+
+    if source_script is not None:
+        if not source_script.exists():
+            raise FileNotFoundError(f"source script does not exist: {source_script}")
+        shutil.copyfile(source_script, project_dir / "mod.py")
+        _copy_or_create_textures_dir(source_script.parent, textures_dir)
+    else:
+        textures_dir.mkdir()
+        _write_placeholder_png(textures_dir / "example_item.png")
+        _write_placeholder_png(textures_dir / "example_block.png")
+        (project_dir / "mod.py").write_text(
+            _example_mod_py(mod_id=args.mod_id, mod_name=args.mod_name),
+            encoding="utf-8",
+        )
+
     (project_dir / "pyneoforge.toml").write_text(
         "\n".join(
             [
@@ -185,6 +195,8 @@ def _apply_template_values(
 
 
 def _generate_resources(*, script: Path, resources_dir: Path, mod_id: str, minecraft_version: str | None) -> Path:
+    script = script.resolve()
+    resources_dir = resources_dir.resolve()
     clear()
     with _pushd(script.parent):
         runpy.run_path(str(script), run_name="__main__")
@@ -220,6 +232,14 @@ def _read_project_config(path: Path) -> dict[str, str]:
 
 def _write_placeholder_png(path: Path) -> None:
     path.write_bytes(base64.b64decode(PLACEHOLDER_PNG))
+
+
+def _copy_or_create_textures_dir(source_dir: Path, destination: Path) -> None:
+    source_textures = source_dir / "textures"
+    if source_textures.exists():
+        shutil.copytree(source_textures, destination)
+    else:
+        destination.mkdir()
 
 
 @contextmanager

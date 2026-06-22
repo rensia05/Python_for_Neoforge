@@ -52,10 +52,34 @@ public final class GeneratedContentLoader {
     public record GeneratedItem(
             String id,
             @SerializedName("display_name") String displayName,
-            @SerializedName("max_stack_size") int maxStackSize) {
+            @SerializedName("max_stack_size") int maxStackSize,
+            String kind,
+            GeneratedFood food,
+            String tier,
+            @SerializedName("attack_damage") Float attackDamage,
+            @SerializedName("attack_speed") Float attackSpeed) {
         public int maxStackSize() {
             return maxStackSize <= 0 ? 64 : maxStackSize;
         }
+
+        public String kind() {
+            return kind == null ? "item" : kind;
+        }
+
+        public float attackDamage(float fallback) {
+            return attackDamage == null ? fallback : attackDamage;
+        }
+
+        public float attackSpeed(float fallback) {
+            return attackSpeed == null ? fallback : attackSpeed;
+        }
+    }
+
+    public record GeneratedFood(
+            int nutrition,
+            float saturation,
+            @SerializedName("always_edible") boolean alwaysEdible,
+            boolean fast) {
     }
 
     public record GeneratedBlock(

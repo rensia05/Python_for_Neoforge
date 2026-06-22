@@ -1,5 +1,8 @@
 {
   "item.python_for_neoforge.ruby": "Ruby",
+  "item.python_for_neoforge.ruby_apple": "Ruby Apple",
+  "item.python_for_neoforge.ruby_sword": "Ruby Sword",
+  "item.python_for_neoforge.ruby_pickaxe": "Ruby Pickaxe",
   "block.python_for_neoforge.ruby_block": "Ruby Block",
   "block.python_for_neoforge.ruby_machine": "Ruby Machine",
   "itemGroup.python_for_neoforge.main": "Python for NeoForge"

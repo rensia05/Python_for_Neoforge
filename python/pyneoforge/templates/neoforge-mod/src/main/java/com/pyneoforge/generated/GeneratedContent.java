@@ -5,10 +5,19 @@ import java.util.List;
 import java.util.Map;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.DiggerItem;
+import net.minecraft.world.item.HoeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.PickaxeItem;
+import net.minecraft.world.item.ShovelItem;
+import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -54,9 +63,60 @@ public final class GeneratedContent {
     private static void registerItems(List<GeneratedContentLoader.GeneratedItem> items) {
         for (GeneratedContentLoader.GeneratedItem item : items) {
             DeferredHolder<Item, Item> registeredItem =
-                    ITEMS.register(item.id(), () -> new Item(new Item.Properties().stacksTo(item.maxStackSize())));
+                    ITEMS.register(item.id(), () -> createItem(item));
             ITEMS_BY_ID.put(item.id(), registeredItem);
         }
+    }
+
+    private static Item createItem(GeneratedContentLoader.GeneratedItem item) {
+        Item.Properties properties = new Item.Properties().stacksTo(item.maxStackSize());
+        if (item.food() != null) {
+            properties.food(createFoodProperties(item.food()));
+        }
+
+        Tier tier = tier(item.tier());
+        return switch (item.kind()) {
+            case "sword" -> new SwordItem(
+                    tier,
+                    properties.attributes(SwordItem.createAttributes(tier, item.attackDamage(3.0F), item.attackSpeed(-2.4F))));
+            case "pickaxe" -> new PickaxeItem(
+                    tier,
+                    properties.attributes(DiggerItem.createAttributes(tier, item.attackDamage(1.0F), item.attackSpeed(-2.8F))));
+            case "axe" -> new AxeItem(
+                    tier,
+                    properties.attributes(DiggerItem.createAttributes(tier, item.attackDamage(6.0F), item.attackSpeed(-3.1F))));
+            case "shovel" -> new ShovelItem(
+                    tier,
+                    properties.attributes(DiggerItem.createAttributes(tier, item.attackDamage(1.5F), item.attackSpeed(-3.0F))));
+            case "hoe" -> new HoeItem(
+                    tier,
+                    properties.attributes(DiggerItem.createAttributes(tier, item.attackDamage(-2.0F), item.attackSpeed(-1.0F))));
+            default -> new Item(properties);
+        };
+    }
+
+    private static FoodProperties createFoodProperties(GeneratedContentLoader.GeneratedFood food) {
+        FoodProperties.Builder builder = new FoodProperties.Builder()
+                .nutrition(food.nutrition())
+                .saturationModifier(food.saturation());
+        if (food.alwaysEdible()) {
+            builder.alwaysEdible();
+        }
+        if (food.fast()) {
+            builder.fast();
+        }
+        return builder.build();
+    }
+
+    private static Tier tier(String tier) {
+        return switch (tier == null ? "iron" : tier) {
+            case "wood" -> Tiers.WOOD;
+            case "stone" -> Tiers.STONE;
+            case "diamond" -> Tiers.DIAMOND;
+            case "gold" -> Tiers.GOLD;
+            case "netherite" -> Tiers.NETHERITE;
+            default -> Tiers.IRON;
+        };
     }
 
     private static void registerBlocks(List<GeneratedContentLoader.GeneratedBlock> blocks) {
