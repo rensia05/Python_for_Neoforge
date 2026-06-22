@@ -3,8 +3,12 @@ package com.pyneoforge.generated;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.BlockItem;
@@ -18,6 +22,7 @@ import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.Tiers;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -35,6 +40,7 @@ public final class GeneratedContent {
 
     private static final Map<String, DeferredHolder<Item, ? extends Item>> ITEMS_BY_ID = new HashMap<>();
     private static final Map<String, DeferredHolder<Block, Block>> BLOCKS_BY_ID = new HashMap<>();
+    private static final Map<String, Tier> CUSTOM_TIERS_BY_ID = new HashMap<>();
 
     private static boolean loaded;
 
@@ -55,9 +61,25 @@ public final class GeneratedContent {
         loaded = true;
 
         GeneratedContentLoader.GeneratedMod generatedMod = GeneratedContentLoader.load(PythonForNeoForge.MOD_ID);
+        registerCustomTiers(generatedMod.customTiers());
         registerItems(generatedMod.items());
         registerBlocks(generatedMod.blocks());
         registerCreativeTabs(generatedMod.creativeTabs());
+    }
+
+    private static void registerCustomTiers(List<GeneratedContentLoader.GeneratedTier> tiers) {
+        for (GeneratedContentLoader.GeneratedTier tier : tiers) {
+            Tier baseTier = tier(tier.baseTier());
+            CUSTOM_TIERS_BY_ID.put(
+                    tier.id(),
+                    new GeneratedTier(
+                            baseTier,
+                            tier.durability(),
+                            tier.miningSpeed(),
+                            tier.attackDamageBonus(),
+                            tier.enchantmentValue(),
+                            () -> repairIngredient(tier.repairIngredient())));
+        }
     }
 
     private static void registerItems(List<GeneratedContentLoader.GeneratedItem> items) {
@@ -109,7 +131,12 @@ public final class GeneratedContent {
     }
 
     private static Tier tier(String tier) {
-        return switch (tier == null ? "iron" : tier) {
+        String tierId = tier == null ? "iron" : tier;
+        Tier customTier = CUSTOM_TIERS_BY_ID.get(tierId);
+        if (customTier != null) {
+            return customTier;
+        }
+        return switch (tierId) {
             case "wood" -> Tiers.WOOD;
             case "stone" -> Tiers.STONE;
             case "diamond" -> Tiers.DIAMOND;
@@ -117,6 +144,17 @@ public final class GeneratedContent {
             case "netherite" -> Tiers.NETHERITE;
             default -> Tiers.IRON;
         };
+    }
+
+    private static Ingredient repairIngredient(String id) {
+        if (id == null || id.isBlank()) {
+            return Ingredient.of();
+        }
+        if (id.startsWith("#")) {
+            ResourceLocation tagId = resourceLocation(id.substring(1));
+            return Ingredient.of(TagKey.create(Registries.ITEM, tagId));
+        }
+        return Ingredient.of(resolveItemLike(id));
     }
 
     private static void registerBlocks(List<GeneratedContentLoader.GeneratedBlock> blocks) {
@@ -165,11 +203,59 @@ public final class GeneratedContent {
             return block.get();
         }
 
+        if (id.contains(":")) {
+            return BuiltInRegistries.ITEM.get(resourceLocation(id));
+        }
+
         throw new IllegalStateException("Unknown generated creative tab entry: " + id);
+    }
+
+    private static ResourceLocation resourceLocation(String id) {
+        return id.contains(":")
+                ? ResourceLocation.parse(id)
+                : ResourceLocation.fromNamespaceAndPath(PythonForNeoForge.MOD_ID, id);
     }
 
     private static String stripOwnNamespace(String id) {
         String prefix = PythonForNeoForge.MOD_ID + ":";
         return id.startsWith(prefix) ? id.substring(prefix.length()) : id;
+    }
+
+    private record GeneratedTier(
+            Tier baseTier,
+            int durability,
+            float miningSpeed,
+            float attackDamageBonus,
+            int enchantmentValue,
+            Supplier<Ingredient> repairIngredient) implements Tier {
+        @Override
+        public int getUses() {
+            return durability;
+        }
+
+        @Override
+        public float getSpeed() {
+            return miningSpeed;
+        }
+
+        @Override
+        public float getAttackDamageBonus() {
+            return attackDamageBonus;
+        }
+
+        @Override
+        public TagKey<Block> getIncorrectBlocksForDrops() {
+            return baseTier.getIncorrectBlocksForDrops();
+        }
+
+        @Override
+        public int getEnchantmentValue() {
+            return enchantmentValue;
+        }
+
+        @Override
+        public Ingredient getRepairIngredient() {
+            return repairIngredient.get();
+        }
     }
 }

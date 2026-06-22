@@ -16,6 +16,17 @@ class FoodDef:
 
 
 @dataclass(frozen=True)
+class CustomTierDef:
+    id: str
+    durability: int
+    mining_speed: float
+    attack_damage_bonus: float
+    enchantment_value: int
+    repair_ingredient: str | None = None
+    base_tier: str = "iron"
+
+
+@dataclass(frozen=True)
 class ItemDef:
     id: str
     display_name: str | None = None
@@ -77,6 +88,7 @@ class ModConfig:
 
 _items: list[ItemDef] = []
 _blocks: list[BlockDef] = []
+_custom_tiers: list[CustomTierDef] = []
 _creative_tabs: list[CreativeTabDef] = []
 _shaped_recipes: list[ShapedRecipeDef] = []
 _shapeless_recipes: list[ShapelessRecipeDef] = []
@@ -86,6 +98,7 @@ _config = ModConfig()
 def clear() -> None:
     _items.clear()
     _blocks.clear()
+    _custom_tiers.clear()
     _creative_tabs.clear()
     _shaped_recipes.clear()
     _shapeless_recipes.clear()
@@ -101,6 +114,41 @@ def config(*, mod_version: int | str | None = None, minecraft_version: int | str
         _config.minecraft_version = normalize_minecraft_version(version)
 
     return _config
+
+
+def custom_tier(
+    id: str,
+    *,
+    durability: int,
+    mining_speed: float,
+    attack_damage_bonus: float,
+    enchantment_value: int,
+    repair_ingredient: str | None = None,
+    base_tier: str = "iron",
+) -> CustomTierDef:
+    _validate_id(id)
+    if any(definition.id == id for definition in _custom_tiers):
+        raise ValueError(f"duplicate custom tier id: {id!r}")
+    if durability < 1:
+        raise ValueError("durability must be 1 or greater")
+    if mining_speed < 0:
+        raise ValueError("mining_speed must be 0 or greater")
+    if enchantment_value < 0:
+        raise ValueError("enchantment_value must be 0 or greater")
+
+    normalized_base_tier = _normalize_vanilla_tier(base_tier)
+    normalized_repair_ingredient = normalize_ref(repair_ingredient) if repair_ingredient is not None else None
+    definition = CustomTierDef(
+        id=id,
+        durability=durability,
+        mining_speed=mining_speed,
+        attack_damage_bonus=attack_damage_bonus,
+        enchantment_value=enchantment_value,
+        repair_ingredient=normalized_repair_ingredient,
+        base_tier=normalized_base_tier,
+    )
+    _custom_tiers.append(definition)
+    return definition
 
 
 def item(
@@ -454,6 +502,7 @@ def build(*, mod_id: str, resources_dir: str | Path, mod_version: int | str | No
         "minecraft_version": _config.minecraft_version,
         "items": [asdict(definition) for definition in _items],
         "blocks": [asdict(definition) for definition in _blocks],
+        "custom_tiers": [asdict(definition) for definition in _custom_tiers],
         "creative_tabs": [asdict(definition) for definition in _creative_tabs],
     }
     data_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
@@ -731,6 +780,13 @@ def _validate_stack_size(max_stack_size: int) -> None:
 
 def _normalize_tier(tier: str) -> str:
     normalized = tier.strip().lower()
+    if any(definition.id == normalized for definition in _custom_tiers):
+        return normalized
+    return _normalize_vanilla_tier(tier)
+
+
+def _normalize_vanilla_tier(tier: str) -> str:
+    normalized = tier.strip().lower()
     aliases = {
         "wooden": "wood",
         "golden": "gold",
@@ -738,7 +794,9 @@ def _normalize_tier(tier: str) -> str:
     normalized = aliases.get(normalized, normalized)
     allowed = {"wood", "stone", "iron", "diamond", "gold", "netherite"}
     if normalized not in allowed:
-        raise ValueError(f"tier must be one of {', '.join(sorted(allowed))}: {tier!r}")
+        custom = [definition.id for definition in _custom_tiers]
+        custom_text = f" or custom tiers {', '.join(custom)}" if custom else ""
+        raise ValueError(f"tier must be one of {', '.join(sorted(allowed))}{custom_text}: {tier!r}")
     return normalized
 
 

@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from pyneoforge import block, build, clear, config, creative_tab, food, item, pickaxe, shaped_recipe, shapeless_recipe, sword
+from pyneoforge import block, build, clear, config, creative_tab, custom_tier, food, item, pickaxe, shaped_recipe, shapeless_recipe, sword
 from pyneoforge.registry import normalize_minecraft_version
 
 
@@ -16,9 +16,10 @@ def test_build_writes_generated_resources(tmp_path: Path) -> None:
     clear()
     config(mod_version=1211)
     item("ruby", display_name="Ruby")
+    custom_tier("ruby", durability=900, mining_speed=7.0, attack_damage_bonus=2.5, enchantment_value=18, repair_ingredient="ruby", base_tier="diamond")
     food("ruby_apple", display_name="Ruby Apple", nutrition=6, saturation=0.8)
-    sword("ruby_sword", display_name="Ruby Sword", tier="diamond", attack_damage=4.0, attack_speed=-2.4)
-    pickaxe("ruby_pickaxe", display_name="Ruby Pickaxe", tier="diamond")
+    sword("ruby_sword", display_name="Ruby Sword", tier="ruby", attack_damage=4.0, attack_speed=-2.4)
+    pickaxe("ruby_pickaxe", display_name="Ruby Pickaxe", tier="ruby")
     block("ruby_block", display_name="Ruby Block", max_stack_size=16)
     block(
         "ruby_machine",
@@ -41,10 +42,12 @@ def test_build_writes_generated_resources(tmp_path: Path) -> None:
     generated_path = tmp_path / "assets/python_for_neoforge/pyneoforge/generated.json"
     assert generated_path.exists()
     generated = json.loads(generated_path.read_text(encoding="utf-8"))
+    assert generated["custom_tiers"][0]["durability"] == 900
+    assert generated["custom_tiers"][0]["repair_ingredient"] == "ruby"
     assert generated["items"][1]["kind"] == "food"
     assert generated["items"][1]["food"]["nutrition"] == 6
     assert generated["items"][2]["kind"] == "sword"
-    assert generated["items"][2]["tier"] == "diamond"
+    assert generated["items"][2]["tier"] == "ruby"
     assert generated["blocks"][0]["max_stack_size"] == 16
     assert (tmp_path / "assets/python_for_neoforge/lang/en_us.json").exists()
     assert (tmp_path / "assets/python_for_neoforge/models/item/ruby.json").exists()

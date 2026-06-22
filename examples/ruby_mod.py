@@ -1,10 +1,19 @@
-from pyneoforge import block, config, creative_tab, food, item, pickaxe, shaped_recipe, shapeless_recipe, sword
+from pyneoforge import block, config, creative_tab, custom_tier, food, item, pickaxe, shaped_recipe, shapeless_recipe, sword
 
 config(mod_version=1211)
 item("ruby", display_name="Ruby", texture="python_for_neoforge:item/ruby")
+custom_tier(
+    "ruby",
+    durability=900,
+    mining_speed=7.0,
+    attack_damage_bonus=2.5,
+    enchantment_value=18,
+    repair_ingredient="ruby",
+    base_tier="diamond",
+)
 food("ruby_apple", display_name="Ruby Apple", nutrition=6, saturation=0.8, texture="python_for_neoforge:item/ruby_apple")
-sword("ruby_sword", display_name="Ruby Sword", tier="diamond", attack_damage=4.0, attack_speed=-2.4, texture="python_for_neoforge:item/ruby_sword")
-pickaxe("ruby_pickaxe", display_name="Ruby Pickaxe", tier="diamond", attack_damage=1.0, attack_speed=-2.8, texture="python_for_neoforge:item/ruby_pickaxe")
+sword("ruby_sword", display_name="Ruby Sword", tier="ruby", attack_damage=4.0, attack_speed=-2.4, texture="python_for_neoforge:item/ruby_sword")
+pickaxe("ruby_pickaxe", display_name="Ruby Pickaxe", tier="ruby", attack_damage=1.0, attack_speed=-2.8, texture="python_for_neoforge:item/ruby_pickaxe")
 block(
     "ruby_block",
     display_name="Ruby Block",

@@ -34,9 +34,10 @@ public final class GeneratedContentLoader {
             @SerializedName("minecraft_version") String minecraftVersion,
             List<GeneratedItem> items,
             List<GeneratedBlock> blocks,
+            @SerializedName("custom_tiers") List<GeneratedTier> customTiers,
             @SerializedName("creative_tabs") List<GeneratedCreativeTab> creativeTabs) {
         static GeneratedMod empty() {
-            return new GeneratedMod(1, null, List.of(), List.of(), List.of());
+            return new GeneratedMod(1, null, List.of(), List.of(), List.of(), List.of());
         }
 
         GeneratedMod withDefaults() {
@@ -45,8 +46,19 @@ public final class GeneratedContentLoader {
                     minecraftVersion,
                     items == null ? List.of() : items,
                     blocks == null ? List.of() : blocks,
+                    customTiers == null ? List.of() : customTiers,
                     creativeTabs == null ? List.of() : creativeTabs);
         }
+    }
+
+    public record GeneratedTier(
+            String id,
+            int durability,
+            @SerializedName("mining_speed") float miningSpeed,
+            @SerializedName("attack_damage_bonus") float attackDamageBonus,
+            @SerializedName("enchantment_value") int enchantmentValue,
+            @SerializedName("repair_ingredient") String repairIngredient,
+            @SerializedName("base_tier") String baseTier) {
     }
 
     public record GeneratedItem(

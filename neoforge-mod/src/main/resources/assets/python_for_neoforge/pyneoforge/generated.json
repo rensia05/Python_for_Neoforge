@@ -39,7 +39,7 @@
       "texture_file": null,
       "kind": "sword",
       "food": null,
-      "tier": "diamond",
+      "tier": "ruby",
       "attack_damage": 4.0,
       "attack_speed": -2.4
     },
@@ -51,7 +51,7 @@
       "texture_file": null,
       "kind": "pickaxe",
       "food": null,
-      "tier": "diamond",
+      "tier": "ruby",
       "attack_damage": 1.0,
       "attack_speed": -2.8
     }
@@ -87,6 +87,17 @@
         "down": "python_for_neoforge:block/ruby_machine/bottom"
       },
       "texture_files": null
+    }
+  ],
+  "custom_tiers": [
+    {
+      "id": "ruby",
+      "durability": 900,
+      "mining_speed": 7.0,
+      "attack_damage_bonus": 2.5,
+      "enchantment_value": 18,
+      "repair_ingredient": "ruby",
+      "base_tier": "diamond"
     }
   ],
   "creative_tabs": [
