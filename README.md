@@ -1,6 +1,6 @@
 # Python_for_Neoforge
 
-[README_KR.md] - Korean Readme
+[[README_KR.md]] - Korean Readme
 
 Fully Workable and Compatiable with 1.21.1 NeoForge Version!
 
